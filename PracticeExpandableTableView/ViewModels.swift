@@ -31,12 +31,12 @@ class ManufactureViewModel: NSObject {
     var items = [ManufactureViewModelItem]()
     var expandedItem = [Int: ManufactureViewModelItem]()
     
-    var reloadSection: ((_ section: Int) -> Void)?
+    var reloadSection: ((_ section: Int, _ collapsed: Bool) -> Void)?
     
     override init() {
         super.init()
         
-        let des: String = "Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. "
+        let des: String = "Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean."
         
         let manufactureNames = ["Apple", "HTC", "LG", "Oppo", "Samsung", "Sony"]
         
@@ -55,8 +55,11 @@ extension ManufactureViewModel: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let item = items[section]
-        return 1
+        if items[section].isCollapsed {
+            return 0
+        } else {
+            return 1
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -74,28 +77,26 @@ extension ManufactureViewModel: UITableViewDataSource {
 extension ManufactureViewModel: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
-        if let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: HeaderView.identifier) as? HeaderView {
+        var headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: HeaderView.identifier)
+        
+        if (headerView == nil) {
+            print("headerView nil")
+            headerView = HeaderView()
+            headerView?.frame = CGRect.init(x: 0, y: 0, width: 320, height: 70)
+        }
+        
+        if let headerView = headerView as? HeaderView {
             print("reload \(section)")
             let item = items[section]
-            
             headerView.item = item
             headerView.delegate = self
             headerView.section = section
-            
-            return headerView
         }
         
-        return UIView()
+        return headerView
     }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let item = items[indexPath.section]
-        
-        if item.isCollapsed {
-            return 0
-        } else {
-            return UITableViewAutomaticDimension
-        }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 100
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
@@ -109,10 +110,12 @@ extension ManufactureViewModel: HeaderViewDelegate {
         
         if item.isCollapsible {
             
-            let collapsed = !item.isCollapsed
-            item.isCollapsed = collapsed
-            header.setCollapsed(collapsed: collapsed)
-            reloadSection?(section)
+            if (section >= 0) {
+                let collapsed = !item.isCollapsed
+                item.isCollapsed = collapsed
+                header.setCollapsed(collapsed: collapsed)
+                reloadSection?(section, collapsed)
+            }
         }
     }
 }

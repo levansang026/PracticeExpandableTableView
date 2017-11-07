@@ -28,5 +28,7 @@ class ContentTableViewCell: UITableViewCell {
     static var nib: UINib {
         return UINib(nibName: identifier, bundle: nil)
     }
-    
+    override func prepareForReuse() {
+        item = nil
+    }
 }

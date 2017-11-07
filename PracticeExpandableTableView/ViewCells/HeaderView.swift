@@ -38,12 +38,14 @@ class HeaderView: UITableViewHeaderFooterView {
 
             arrowImageView?.image = #imageLiteral(resourceName: "triangle-img")
             titleLabel?.text = item.name
-            setCollapsed(collapsed: item.isCollapsed)
+            if !item.isCollapsed {
+                arrowImageView?.transform = CGAffineTransform(rotationAngle: .pi)
+            }
         }
     }
     
     var delegate: HeaderViewDelegate?
-    var section: Int = 0
+    var section: Int = -1
     
     static var nib:UINib {
         return UINib(nibName: identifier, bundle: nil)
@@ -60,7 +62,7 @@ class HeaderView: UITableViewHeaderFooterView {
     }
     
     func setCollapsed(collapsed: Bool) {
-        arrowImageView?.rorate(collapsed ? 0.0 : .pi)
+        arrowImageView?.rorate(.pi)
     }
     
     @objc private func didTapHeader() {
@@ -70,5 +72,13 @@ class HeaderView: UITableViewHeaderFooterView {
     override func prepareForReuse() {
         super.prepareForReuse()
         arrowImageView?.image = nil
+        delegate = nil
+        section = -1
+        titleLabel?.text = ""
+        item = nil
+    }
+    
+    deinit {
+        print("deinit headerview")
     }
 }

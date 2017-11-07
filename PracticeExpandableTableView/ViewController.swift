@@ -17,20 +17,24 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.reloadSection = { [weak self] (section: Int) in
+        viewModel.reloadSection = { [weak self] (section: Int, collapsed: Bool) in
             self?.tableView?.beginUpdates()
             let indexPath = IndexPath(row: 0, section: section)
-//            self?.tableView?.insertRows(at: [indexPath], with: .fade)
-//            self?.tableView.insert
-            self?.tableView?.reloadRows(at: [indexPath], with: .fade)
+            if !collapsed {
+                self?.tableView?.insertRows(at: [indexPath], with: .fade)
+                print("inserted")
+            } else {
+                self?.tableView?.deleteRows(at: [indexPath], with: .fade)
+                print("deleted")
+            }
             self?.tableView?.endUpdates()
+            self?.tableView?.scrollRectToVisible((self?.tableView?.rect(forSection: section))!, animated: true)
         }
         
         
         
         tableView?.estimatedRowHeight = 100
         tableView?.rowHeight = UITableViewAutomaticDimension
-        tableView?.sectionHeaderHeight = 70
         tableView?.delegate = viewModel
         tableView?.dataSource = viewModel
         tableView?.separatorStyle = .none
