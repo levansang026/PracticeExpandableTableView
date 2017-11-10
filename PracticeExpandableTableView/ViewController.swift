@@ -20,13 +20,14 @@ class ViewController: UIViewController {
         viewModel.reloadSection = { [weak self] (section: Int, collapsed: Bool) in
             self?.tableView?.beginUpdates()
             let indexPath = IndexPath(row: 0, section: section)
-            if !collapsed {
-                self?.tableView?.insertRows(at: [indexPath], with: .fade)
-                print("inserted")
-            } else {
-                self?.tableView?.deleteRows(at: [indexPath], with: .fade)
-                print("deleted")
-            }
+//            if !collapsed {
+//                self?.tableView?.insertRows(at: [indexPath], with: .fade)
+//                print("inserted")
+//            } else {
+//                self?.tableView?.deleteRows(at: [indexPath], with: .fade)
+//                print("deleted")
+//            }
+            self?.tableView?.reloadRows(at: [indexPath], with: .fade)
             self?.tableView?.endUpdates()
             self?.tableView?.scrollRectToVisible((self?.tableView?.rect(forSection: section))!, animated: true)
         }

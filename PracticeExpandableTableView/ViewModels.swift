@@ -30,6 +30,7 @@ extension ManufactureViewModelItem {
 class ManufactureViewModel: NSObject {
     var items = [ManufactureViewModelItem]()
     var expandedItem = [Int: ManufactureViewModelItem]()
+    fileprivate var headers: [HeaderView] = []
     
     var reloadSection: ((_ section: Int, _ collapsed: Bool) -> Void)?
     
@@ -55,11 +56,7 @@ extension ManufactureViewModel: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if items[section].isCollapsed {
-            return 0
-        } else {
-            return 1
-        }
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -77,30 +74,35 @@ extension ManufactureViewModel: UITableViewDataSource {
 extension ManufactureViewModel: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
-        var headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: HeaderView.identifier)
-        
-        if (headerView == nil) {
-            print("headerView nil")
-            headerView = HeaderView()
-            headerView?.frame = CGRect.init(x: 0, y: 0, width: 320, height: 70)
+        var headerView = HeaderView()
+        if headers.count > section {
+            headerView = headers[section]
+        } else {
+            headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: HeaderView.identifier) as! HeaderView
+            headers.append(headerView)
         }
         
-        if let headerView = headerView as? HeaderView {
-            print("reload \(section)")
-            let item = items[section]
-            headerView.item = item
-            headerView.delegate = self
-            headerView.section = section
-        }
+        let item = items[section]
+        headerView.item = item
+        headerView.delegate = self
+        headerView.section = section
         
         return headerView
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 100
+        return 70
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
         return 2
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if items[indexPath.section].isCollapsed {
+            return 0
+        }
+        
+        return UITableViewAutomaticDimension
     }
 }
 
