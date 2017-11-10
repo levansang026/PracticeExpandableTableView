@@ -38,9 +38,7 @@ class HeaderView: UITableViewHeaderFooterView {
 
             arrowImageView?.image = #imageLiteral(resourceName: "triangle-img")
             titleLabel?.text = item.name
-            if !item.isCollapsed {
-                arrowImageView?.transform = CGAffineTransform(rotationAngle: .pi)
-            }
+            arrowImageView?.transform = CGAffineTransform(rotationAngle: item.isCollapsed ? 0.0 : .pi)
         }
     }
     
@@ -62,7 +60,7 @@ class HeaderView: UITableViewHeaderFooterView {
     }
     
     func setCollapsed(collapsed: Bool) {
-        arrowImageView?.rorate(.pi)
+        arrowImageView?.rorate(collapsed ? 0.0 : .pi)
     }
     
     @objc private func didTapHeader() {

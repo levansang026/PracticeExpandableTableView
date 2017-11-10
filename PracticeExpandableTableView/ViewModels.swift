@@ -74,7 +74,7 @@ extension ManufactureViewModel: UITableViewDataSource {
 extension ManufactureViewModel: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
-        var headerView = HeaderView()
+        var headerView: HeaderView!
         if headers.count > section {
             headerView = headers[section]
         } else {
@@ -111,7 +111,6 @@ extension ManufactureViewModel: HeaderViewDelegate {
         var item = items[section]
         
         if item.isCollapsible {
-            
             if (section >= 0) {
                 let collapsed = !item.isCollapsed
                 item.isCollapsed = collapsed
@@ -125,11 +124,8 @@ extension ManufactureViewModel: HeaderViewDelegate {
 class SectionContentItem: ManufactureViewModelItem {
     
     var name: String
-    
     var description: String
-    
     var isCollapsed = true
-    
     var isCollpsible: Bool {
         return true
     }
